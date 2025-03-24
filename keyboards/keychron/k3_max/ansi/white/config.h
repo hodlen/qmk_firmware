@@ -16,6 +16,8 @@
 
 #pragma once
 
+#define MATRIX_ROWS 7
+
 #ifdef LED_MATRIX_ENABLE
 /* LED matrix driver configuration */
 #    define DRIVER_COUNT 1
