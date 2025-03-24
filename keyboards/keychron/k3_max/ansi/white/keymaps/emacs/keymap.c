@@ -27,7 +27,9 @@ enum layers {
     EMACS_M,
 };
 
-enum custom_keycodes { KILL_LINE = NEW_SAFE_RANGE };
+enum custom_keycodes {
+    KILL_LINE = NEW_SAFE_RANGE,
+};
 
 uint8_t g_user_led_mode = -1;
 
@@ -78,7 +80,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
      _______,  _______,  C(KC_X),  KC_END, C(S(KC_F)), _______,  C(KC_V),  _______,  _______,  _______,  KC_UP,    _______,  _______,  _______,            _______,
      _______,  KC_HOME,  C(KC_F),  KC_DEL,   KC_RGHT,  KC_ESC,   _______,  _______,  KILL_LINE,_______,  _______,  _______,            _______,            _______,
-     _______,            _______,  _______,  _______,  KC_PGDN,  KC_LEFT,  KC_DOWN,  _______,  _______,  _______,  C(KC_Z),            _______,  _______,  _______,
+     _______,            _______,  QK_LEAD,  _______,  KC_PGDN,  KC_LEFT,  KC_DOWN,  _______,  _______,  _______,  C(KC_Z),            _______,  _______,  _______,
      _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______,  _______),
 
 [EMACS_M] = LAYOUT_ansi_84(
@@ -100,7 +102,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KILL_LINE:
             if (record->event.pressed) {
                 // Select to the line end, then delete
-                SEND_STRING(SS_LSFT(SS_TAP(X_END)) SS_LCTL(SS_TAP(X_X)));
+                SEND_STRING(SS_LSFT(SS_TAP(X_END)) SS_LCTL("x"));
             }
             return false;
             break;
@@ -127,4 +129,33 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
     previous_state = state;
     return state;
+}
+
+// Callback for C-x sequences
+void leader_end_user(void) {
+    // Note: for C-x C-* sequences, the second key is tranformed to
+    // the corresponding EMACS_C keycode defined in the keymap.
+    // e.g.
+    // * Capture C-x C-s by C-x C-f, since C-f is the keycode for s.
+    // * Capture C-x C-c by C-x c, since c is not defined in that layer
+    // and defaults to c in EMACS_BASE.
+    if (leader_sequence_one_key(C(KC_F))) {
+        // C-x, C-s => Save file
+        SEND_STRING(SS_LCTL("s"));
+    } else if (leader_sequence_one_key(KC_RGHT)) {
+        // C-x, C-f => Open file
+        SEND_STRING(SS_LCTL("o"));
+    } else if (leader_sequence_one_key(C(KC_X))) {
+        // C-x, C-w => Save file as
+        SEND_STRING(SS_LSFT(SS_LCTL("s")));
+    } else if (leader_sequence_one_key(KC_C)) {
+        // C-x, C-c => Quit
+        SEND_STRING(SS_LALT(SS_TAP(X_F4)));
+    } else if (leader_sequence_one_key(KC_B)) {
+        // C-x, b => Switch buffer
+        SEND_STRING(SS_LCTL(SS_TAP(X_TAB)));
+    } else if (leader_sequence_one_key(KC_K)) {
+        // C-x, k => Kill buffer
+        SEND_STRING(SS_LCTL("w"));
+    }
 }
