@@ -24,8 +24,10 @@ enum layers {
     WIN_FN,
     EMACS_BASE,
     EMACS_C,
-    EMACS_M
+    EMACS_M,
 };
+
+enum custom_keycodes { KILL_LINE = NEW_SAFE_RANGE, REDO_UNDO };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -51,7 +53,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,            KC_PGDN,
      KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,             KC_HOME,
      KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT,  KC_UP,    KC_END,
-     KC_LCTL,  KC_LGUI,  KC_LALT,                                KC_SPC,                                 KC_RALT, MO(WIN_FN),KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+     KC_LCTL,  KC_LALT,  KC_LGUI,                                KC_SPC,                                 KC_RALT, MO(WIN_FN),KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
 [WIN_FN] = LAYOUT_ansi_84(
      _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FILE,  BL_DOWN,  BL_UP,    KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,  _______,  BL_TOGG,
@@ -67,29 +69,52 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,            KC_PGDN,
      KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,             KC_HOME,
      KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT,  KC_UP,    KC_END,
-     MO(EMACS_C),  KC_LGUI,  MO(EMACS_M),                        KC_SPC,                                 KC_RALT, MO(WIN_FN),KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+     MO(EMACS_C),  MO(EMACS_M),  KC_LGUI,                        KC_SPC,                                 KC_RALT, MO(WIN_FN),KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
 [EMACS_C] = LAYOUT_ansi_84(
      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
-     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_DEL,             _______,
-     _______,  _______,  _______,  KC_END,   _______,  _______,  _______,  _______,  _______,  _______,  KC_PGUP,  _______,  _______,  _______,            _______,
-     _______,  KC_HOME,  _______,  KC_DEL,   KC_RGHT,  _______,  KC_BSPC,  _______,  _______,  _______,  _______,  _______,            KC_ENT,             _______,
-     _______,            _______,  _______,  _______,  _______,  KC_LEFT,  KC_DOWN,  _______,  _______,  _______,  _______,            _______,  KC_UP,    _______,
-     _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+     _______,  _______,  C(KC_X),  KC_END, C(S(KC_F)), _______,  C(KC_V),  _______,  _______,  _______,  KC_UP,    _______,  _______,  _______,            _______,
+     _______,  KC_HOME,  C(KC_F),  KC_DEL,   KC_RGHT,  KC_ESC,   _______,  _______,  KILL_LINE,_______,  _______,  _______,            _______,            _______,
+     _______,            _______,  _______,  _______,  KC_PGDN,  KC_LEFT,  KC_DOWN,  _______,  _______,  _______,  REDO_UNDO,          _______,  _______,  _______,
+     _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______,  _______),
 
 [EMACS_M] = LAYOUT_ansi_84(
      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
-     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-     _______,  _______,  _______,  _______,  KC_RGHT,  _______,  KC_LEFT,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
-     _______,            _______,  _______,  _______,  _______,  KC_BSPC,  _______,  _______,  _______,  _______,  KC_DEL,             _______,  _______,  _______,
-     _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______,  _______)
+     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  C(KC_BSPC),         _______,
+     _______,  _______,  C(KC_C),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+     _______,  _______,  _______,C(KC_DEL),C(KC_RIGHT),_______,  KC_LEFT,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
+     _______,            _______,  _______,  _______,  KC_PGUP, C(KC_BSPC),_______,  _______, C(KC_HOME),C(KC_END),_______,            _______,  _______,  _______,
+     _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______,  _______),
 };
 
 // clang-format on
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_record_keychron_common(keycode, record)) {
         return false;
+    }
+
+    switch (keycode) {
+        case KILL_LINE:
+            if (record->event.pressed) {
+                // Select to the line end, then delete
+                SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_END))) SS_LCTL(SS_TAP(X_X)));
+            }
+            return false;
+            break;
+        case REDO_UNDO:
+            if (record->event.pressed) {
+                bool with_shift = get_mods() & (MOD_BIT_LSHIFT | MOD_BIT_RSHIFT);
+                if (with_shift) {
+                    // Redo
+                    SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_Z))));
+                } else {
+                    // Undo
+                    SEND_STRING(SS_LCTL(SS_TAP(X_Z)));
+                }
+            }
+            return false;
+            break;
     }
 
     return true;
