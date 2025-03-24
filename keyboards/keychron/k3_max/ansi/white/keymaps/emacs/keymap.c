@@ -27,7 +27,7 @@ enum layers {
     EMACS_M,
 };
 
-enum custom_keycodes { KILL_LINE = NEW_SAFE_RANGE, REDO_UNDO };
+enum custom_keycodes { KILL_LINE = NEW_SAFE_RANGE };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -76,7 +76,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
      _______,  _______,  C(KC_X),  KC_END, C(S(KC_F)), _______,  C(KC_V),  _______,  _______,  _______,  KC_UP,    _______,  _______,  _______,            _______,
      _______,  KC_HOME,  C(KC_F),  KC_DEL,   KC_RGHT,  KC_ESC,   _______,  _______,  KILL_LINE,_______,  _______,  _______,            _______,            _______,
-     _______,            _______,  _______,  _______,  KC_PGDN,  KC_LEFT,  KC_DOWN,  _______,  _______,  _______,  REDO_UNDO,          _______,  _______,  _______,
+     _______,            _______,  _______,  _______,  KC_PGDN,  KC_LEFT,  KC_DOWN,  _______,  _______,  _______,  C(KC_Z),            _______,  _______,  _______,
      _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______,  _______),
 
 [EMACS_M] = LAYOUT_ansi_84(
@@ -84,7 +84,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  C(KC_BSPC),         _______,
      _______,  _______,  C(KC_C),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
      _______,  _______,  _______,C(KC_DEL),C(KC_RIGHT),_______,  KC_LEFT,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
-     _______,            _______,  _______,  _______,  KC_PGUP, C(KC_BSPC),_______,  _______, C(KC_HOME),C(KC_END),_______,            _______,  _______,  _______,
+     _______,            _______,  _______,  _______,  KC_PGUP, C(KC_LEFT),_______,  _______, C(KC_HOME),C(KC_END),_______,            _______,  _______,  _______,
      _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______,  _______),
 };
 
@@ -98,20 +98,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KILL_LINE:
             if (record->event.pressed) {
                 // Select to the line end, then delete
-                SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_END))) SS_LCTL(SS_TAP(X_X)));
-            }
-            return false;
-            break;
-        case REDO_UNDO:
-            if (record->event.pressed) {
-                bool with_shift = get_mods() & (MOD_BIT_LSHIFT | MOD_BIT_RSHIFT);
-                if (with_shift) {
-                    // Redo
-                    SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_Z))));
-                } else {
-                    // Undo
-                    SEND_STRING(SS_LCTL(SS_TAP(X_Z)));
-                }
+                SEND_STRING(SS_LSFT(SS_TAP(X_END)) SS_LCTL(SS_TAP(X_X)));
             }
             return false;
             break;
