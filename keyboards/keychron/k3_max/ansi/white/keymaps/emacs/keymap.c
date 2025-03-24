@@ -29,6 +29,8 @@ enum layers {
 
 enum custom_keycodes { KILL_LINE = NEW_SAFE_RANGE };
 
+uint8_t g_user_led_mode = -1;
+
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [MAC_BASE] = LAYOUT_ansi_84(
@@ -105,4 +107,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     return true;
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    static layer_state_t previous_state      = 0;
+    bool                 previous_emacs_mode = previous_state >= EMACS_BASE;
+    bool                 current_emacs       = state >= EMACS_BASE;
+
+    if (current_emacs && !previous_emacs_mode) {
+        // Turn on all lights to indicate emacs emulation on
+        g_user_led_mode = led_matrix_get_mode();
+        led_matrix_mode_noeeprom(LED_MATRIX_SOLID);
+    } else if (!current_emacs && previous_emacs_mode) {
+        // Restore previously saved mode if overwritten
+        if (g_user_led_mode != -1) {
+            led_matrix_mode_noeeprom(g_user_led_mode);
+        }
+    }
+
+    previous_state = state;
+    return state;
 }
